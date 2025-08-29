@@ -20,13 +20,19 @@ export default function MonProfil() {
   const router = useRouter()
 
   const [profile, setProfile] = useState<ProfileData | null>(null)
-  const [_, setLoading] = useState(true)
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [, setLoading] = useState(true)
+
   const [message, setMessage] = useState<string | null>(null)
   const [inputLycee, setInputLycee] = useState("")
   const [inputEtude, setInputEtude] = useState("")
   const [inputMatiere, setInputMatiere] = useState("")
   const [inputProfession, setInputProfession] = useState("")
-  const [__, setIsDirty] = useState<boolean>(false)
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [dirty, setIsDirty] = useState<boolean>(false)
+  
   const [table, setTable] = useState('')
   const [previewAvatar, setPreviewAvatar] = useState<string | null>(null)
 

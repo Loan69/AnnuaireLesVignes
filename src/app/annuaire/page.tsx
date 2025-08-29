@@ -24,9 +24,13 @@ export default function Annuaire() {
   const [profile, setProfile] = useState<ProfileData | null>(null)
   const [eleves, setEleves] = useState<Partial<Eleve>[]>([])
   
-  const [_, setLoading] = useState(true)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [loading, setLoading] = useState(true)
+
   const [error, setError] = useState<string | null>(null)
-  const [__, setTable] = useState('')
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [table, setTable] = useState('')
 
   const [search, setSearch] = useState('')
   const [promoFilter, setPromoFilter] = useState<string | null>(null)
