@@ -62,7 +62,7 @@ export default function AjoutUtilisateur() {
           </button>
         </div>
 
-        <label className="block mb-2 font-semibold">Type d'utilisateur :</label>
+        <label className="block mb-2 font-semibold">Type d&apos;utilisateur :</label>
         <select
           value={type}
           onChange={(e) => setType(e.target.value as 'E' | 'P')}

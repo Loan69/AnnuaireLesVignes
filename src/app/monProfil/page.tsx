@@ -20,13 +20,13 @@ export default function MonProfil() {
   const router = useRouter()
 
   const [profile, setProfile] = useState<ProfileData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [_, setLoading] = useState(true)
   const [message, setMessage] = useState<string | null>(null)
   const [inputLycee, setInputLycee] = useState("")
   const [inputEtude, setInputEtude] = useState("")
   const [inputMatiere, setInputMatiere] = useState("")
   const [inputProfession, setInputProfession] = useState("")
-  const [isDirty, setIsDirty] = useState<Boolean>(false)
+  const [__, setIsDirty] = useState<boolean>(false)
   const [table, setTable] = useState('')
   const [previewAvatar, setPreviewAvatar] = useState<string | null>(null)
 
@@ -51,7 +51,7 @@ export default function MonProfil() {
       if (!user) return
   
       // 1️⃣ Chercher dans eleves
-      const { data: eleveData, error: eleveError } = await supabase
+      const { data: eleveData } = await supabase
         .from('eleves')
         .select('*')
         .eq('user_id', user.id)
@@ -67,7 +67,7 @@ export default function MonProfil() {
       }
   
       // 2️⃣ Chercher dans professeurs (si pas trouvé dans eleves)
-      const { data: profData, error: profError } = await supabase
+      const { data: profData } = await supabase
         .from('professeurs')
         .select('*')
         .eq('user_id', user.id)

@@ -24,9 +24,9 @@ export default function Annuaire() {
   const [profile, setProfile] = useState<ProfileData | null>(null)
   const [eleves, setEleves] = useState<Partial<Eleve>[]>([])
   
-  const [loading, setLoading] = useState(true)
+  const [_, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [table, setTable] = useState('')
+  const [__, setTable] = useState('')
 
   const [search, setSearch] = useState('')
   const [promoFilter, setPromoFilter] = useState<string | null>(null)
@@ -51,7 +51,7 @@ export default function Annuaire() {
       if (!user) return;
   
       // 🔍 1️⃣ Chercher dans eleves
-      const { data: eleveData, error: eleveError } = await supabase
+      const { data: eleveData } = await supabase
         .from('eleves')
         .select('id, is_admin, prenom, nom')
         .eq('user_id', user.id)
@@ -67,7 +67,7 @@ export default function Annuaire() {
       }
   
       // 🔍 2️⃣ Chercher dans professeurs
-      const { data: profData, error: profError } = await supabase
+      const { data: profData } = await supabase
         .from('professeurs')
         .select('id, is_admin, prenom, nom')
         .eq('user_id', user.id)

@@ -40,7 +40,7 @@ export default function ProfilPage() {
       <div className="flex flex-col items-center justify-center h-screen text-gray-500">
         <p>Aucun profil trouvé.</p>
         <Button className="mt-4" onClick={() => router.push("/annuaire")}>
-          Retour à l'annuaire
+          Retour à l&apos;annuaire
         </Button>
       </div>
     )
@@ -49,7 +49,7 @@ export default function ProfilPage() {
   return (
     <div>
       <Header/>
-      
+
       <div className="min-h-screen bg-[#f9f9fc]">
         <div className="max-w-3xl mx-auto py-12 px-6">
           <div className="bg-white rounded-2xl shadow-lg p-8 relative overflow-hidden">
