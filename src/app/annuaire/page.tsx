@@ -100,6 +100,8 @@ export default function Annuaire() {
       const { data, error } = await supabase
         .from('eleves')
         .select('*')
+        .order('nom', { ascending: true })       // tri par nom
+        .order('prenom', { ascending: true })   // tri par prénom
 
       if (error) {
         setError('Erreur lors du chargement des élèves.')
