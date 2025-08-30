@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../../lib/supabaseClient'
+import Header from '../components/Header'
 
 export default function DefinirMotDePasse() {
   const [password, setPassword] = useState('')
@@ -13,7 +14,6 @@ export default function DefinirMotDePasse() {
 
   useEffect(() => {
     const checkSessionAndType = async () => {
-      // Vérifie la session
       const { data: sessionData } = await supabase.auth.getSession()
       if (!sessionData.session) {
         setMessage('Lien invalide ou expiré.')
@@ -23,7 +23,6 @@ export default function DefinirMotDePasse() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
-      // Vérifie si l'utilisateur est dans eleves
       const { data: eleve } = await supabase
         .from('eleves')
         .select('id')
@@ -35,7 +34,6 @@ export default function DefinirMotDePasse() {
         return
       }
 
-      // Vérifie si l'utilisateur est dans professeurs
       const { data: prof } = await supabase
         .from('professeurs')
         .select('id')
@@ -52,7 +50,7 @@ export default function DefinirMotDePasse() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
+  
     // 1. Met à jour le mot de passe
     const { error: updateError } = await supabase.auth.updateUser({ password })
     if (updateError) {
@@ -60,67 +58,104 @@ export default function DefinirMotDePasse() {
       console.error(updateError)
       return
     }
-
-    // 2. Récupère l'utilisateur
+  
+    // 2. Vérifie la session actuelle
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+    if (sessionError || !sessionData.session) {
+      setMessage('Mot de passe défini, mais aucune session active. Redirection vers le login...')
+      setTimeout(() => router.push('/login'), 2000)
+      return
+    }
+  
+    // 3. Met à jour la promo si élève
     const { data: { user }, error: userError } = await supabase.auth.getUser()
     if (userError || !user) {
       setMessage("Impossible de récupérer l'utilisateur.")
       console.error(userError)
       return
     }
-
-    // 3. Si élève → update promo
+  
     if (typeUtilisateur === 'eleve') {
       const { error: promoError } = await supabase
         .from('eleves')
         .update({ promo })
         .eq('user_id', user.id)
-
+  
       if (promoError) {
         setMessage('Erreur lors de la mise à jour de la promo.')
         console.error(promoError)
         return
       }
     }
-
+  
+    // 4. Redirige directement vers l'annuaire
     setMessage('Compte configuré avec succès. Redirection...')
-    setTimeout(() => router.push('/annuaire'), 2000)
+    setTimeout(() => router.push('/annuaire'), 1000)
   }
+  
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-4">
-      <h1 className="text-2xl font-semibold mb-4">Définir votre mot de passe</h1>
-      <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-3">
+    <div>
+      <Header />
+      <main className="flex flex-col items-center bg-gray-50 p-6 pt-20 min-h-screen">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+          <h1 className="text-2xl font-bold text-[#1b0a6d] text-center mb-2">
+            Bienvenue sur l’annuaire
+          </h1>
+          <p className="text-[#1b0a6d] text-center mb-6">
+            Merci de finaliser la création de votre compte en définissant votre mot de passe.
+          </p>
 
-        {/* Champ promo uniquement si élève */}
-        {typeUtilisateur === 'eleve' && (
-          <input
-            type="text"
-            placeholder="Promo"
-            value={promo}
-            onChange={(e) => setPromo(e.target.value)}
-            className="w-full px-4 py-2 border rounded"
-            required
-          />
-        )}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {typeUtilisateur === 'eleve' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Promo</label>
+                <input
+                  type="text"
+                  placeholder="Ex : 2020"
+                  value={promo}
+                  onChange={(e) => setPromo(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+            )}
 
-        <input
-          type="password"
-          placeholder="Nouveau mot de passe"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-4 py-2 border rounded"
-          required
-        />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Nouveau mot de passe
+              </label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 cursor-pointer"
-        >
-          Valider
-        </button>
-      </form>
-      {message && <p className="mt-4 text-sm text-center text-gray-600">{message}</p>}
-    </main>
+            <button
+              type="submit"
+              className="w-full bg-[#1b0a6d] text-white py-2 rounded-lg hover:bg-[#D1D6F6] hover:text-black font-medium transition-colors cursor-pointer"
+            >
+              Valider
+            </button>
+          </form>
+
+          {message && (
+            <p
+              className={`mt-4 text-center text-sm ${
+                message.includes('succès')
+                  ? 'text-green-600'
+                  : 'text-red-600'
+              }`}
+            >
+              {message}
+            </p>
+          )}
+        </div>
+      </main>
+    </div>
   )
 }

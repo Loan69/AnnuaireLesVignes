@@ -8,6 +8,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { User } from '@supabase/supabase-js'
 import { Professeur } from '@/types/Professeur'
 import Header from '../components/Header'
+import LoadingSpinner from '../components/LoadingSpinner'
 
 type ProfileData =
   | { type: 'eleve'; data: Eleve }
@@ -21,8 +22,7 @@ export default function MonProfil() {
 
   const [profile, setProfile] = useState<ProfileData | null>(null)
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true)
 
   const [message, setMessage] = useState<string | null>(null)
   const [inputLycee, setInputLycee] = useState("")
@@ -32,7 +32,7 @@ export default function MonProfil() {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [dirty, setIsDirty] = useState<boolean>(false)
-  
+
   const [table, setTable] = useState('')
   const [previewAvatar, setPreviewAvatar] = useState<string | null>(null)
 
@@ -69,6 +69,7 @@ export default function MonProfil() {
           type: 'eleve',
           data: eleveData as Eleve,
         })
+        setLoading(false)
         return
       }
   
@@ -85,6 +86,7 @@ export default function MonProfil() {
           type: 'professeur',
           data: profData as Professeur,
         })
+        setLoading(false)
         return
       }
   
@@ -251,6 +253,10 @@ export default function MonProfil() {
     router.push('/annuaire')
   }
 
+  if(loading) {
+    return <LoadingSpinner />
+  }
+
   return (
     <div>
       <Header />
@@ -259,9 +265,11 @@ export default function MonProfil() {
         <div className="max-w-2xl mx-auto px-6 py-10">
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-semibold text-[#1b0a6d]">Mes informations</h1>
+
+            {/* Bouton de retour vers l'annuaire */}
             <button
               onClick={handleBack}
-              className="text-sm bg-[#1b0a6d] text-white hover:bg-blue-300 px-4 py-2 rounded cursor-pointer"
+              className="text-sm bg-[#1b0a6d] text-white hover:bg-[#d3243a] px-4 py-2 rounded cursor-pointer"
             >
               Retour
             </button>

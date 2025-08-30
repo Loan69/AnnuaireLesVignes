@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import Link from 'next/link'
 import { User } from '@supabase/auth-helpers-nextjs'
 import { Professeur } from '@/types/Professeur'
+import LoadingSpinner from '../components/LoadingSpinner'
 
 type ProfileData =
   | { type: 'eleve'; data: Eleve }
@@ -23,8 +24,6 @@ export default function Annuaire() {
 
   const [profile, setProfile] = useState<ProfileData | null>(null)
   const [eleves, setEleves] = useState<Partial<Eleve>[]>([])
-  
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(true)
 
   const [error, setError] = useState<string | null>(null)
@@ -128,6 +127,10 @@ export default function Annuaire() {
   const uniquePromos = Array.from(new Set(eleves.map((e) => e?.promo))).filter(Boolean).sort()
 
   if (error) return <p className="p-4 text-red-500">{error}</p>
+  
+  if(loading) {
+    return <LoadingSpinner />
+  }
 
   return (
     <div>
@@ -162,11 +165,12 @@ export default function Annuaire() {
           >
             Mes paramètres
           </Button>
-  
+          
+          {/* Bouton d'ajout d'utilisateurs : Seulement pour admin !! */}
           {(profile?.data.is_admin === true) && (
             <Link
               href="/admin/ajoutUtilisateur"
-              className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+              className="px-4 py-2 bg-[#1b0a6d] text-white rounded hover:bg-[#D1D6F6] transition"
             >
               Admin
             </Link>

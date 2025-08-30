@@ -12,6 +12,8 @@ export default function LoginPage() {
   const [message, setMessage] = useState<string | null>(null);
   const router = useRouter()
 
+
+  // Vérification des infos de connexion de l'utilisateur
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -34,7 +36,7 @@ export default function LoginPage() {
 
         {/* Formulaire de connexion */}
         <div className="max-w-md mx-auto mt-20 bg-white p-8 shadow rounded">
-        <h2 className="text-2xl font-semibold mb-6 text-center">Connexion</h2>
+        <h2 className="text-2xl font-semibold text-[#1b0a6d] mb-6 text-center">Connexion</h2>
 
         <form onSubmit={handleLogin} className="space-y-4">
             <div>
@@ -65,7 +67,7 @@ export default function LoginPage() {
 
             <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition cursor-pointer"
+            className="w-full bg-[#1b0a6d] text-white py-2 rounded hover:bg-[#D1D6F6] hover:text-black transition cursor-pointer"
             >
             Se connecter
             </button>

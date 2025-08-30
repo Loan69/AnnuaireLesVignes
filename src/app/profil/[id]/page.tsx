@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import type { Eleve } from "@/types/Eleve"
 import Header from "@/app/components/Header"
+import LoadingSpinner from "@/app/components/LoadingSpinner"
 
 export default function ProfilPage() {
   const params = useParams()
@@ -32,7 +33,7 @@ export default function ProfilPage() {
   }, [params?.id])
 
   if (loading) {
-    return <div className="flex items-center justify-center h-screen text-gray-500">Chargement...</div>
+    return <LoadingSpinner />
   }
 
   if (!eleve) {
@@ -100,6 +101,7 @@ export default function ProfilPage() {
               <InfoRow label="Nom" value={eleve.nom} />
               <InfoRow label="Promotion" value={eleve.promo} />
               <InfoRow label="Email professionnel" value={eleve.email_pro} />
+              <InfoRow label="Téléphone" value={eleve.telephone} />
 
               <ArrayRow label="Lycée(s)" items={eleve.lycees} />
               <ArrayRow label="Études supérieures" items={eleve.etudes_sup} />

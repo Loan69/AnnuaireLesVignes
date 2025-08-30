@@ -56,7 +56,7 @@ export default function AjoutUtilisateur() {
           </h1>
           <button
             onClick={handleBack}
-            className="text-m bg-[#1b0a6d] text-white hover:bg-blue-300 px-4 py-2 rounded cursor-pointer"
+            className="text-m bg-[#1b0a6d] text-white hover:bg-[#d3243a] px-4 py-2 rounded cursor-pointer"
           >
             Retour
           </button>
