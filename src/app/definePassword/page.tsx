@@ -49,49 +49,59 @@ export default function DefinirMotDePasse() {
   }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
   
     // 1. Met à jour le mot de passe
-    const { error: updateError } = await supabase.auth.updateUser({ password })
+    const { error: updateError } = await supabase.auth.updateUser({ password });
     if (updateError) {
-      setMessage('Erreur lors de la mise à jour du mot de passe.')
-      console.error(updateError)
-      return
+      setMessage('Erreur lors de la mise à jour du mot de passe.');
+      console.error(updateError);
+      return;
     }
   
-    // 2. Vérifie la session actuelle
-    const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+    // 2. Rafraîchit explicitement la session (Option 1)
+    const { error: refreshError } = await supabase.auth.refreshSession();
+    if (refreshError) {
+      setMessage('Mot de passe défini, mais problème de session. Redirection vers le login...');
+      console.error(refreshError);
+      setTimeout(() => router.push('/login'), 2000);
+      return;
+    }
+  
+    // 3. Vérifie la session actuelle après le rafraîchissement
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
     if (sessionError || !sessionData.session) {
-      setMessage('Mot de passe défini, mais aucune session active. Redirection vers le login...')
-      setTimeout(() => router.push('/login'), 2000)
-      return
+      setMessage('Mot de passe défini, mais aucune session active. Redirection vers le login...');
+      setTimeout(() => router.push('/login'), 2000);
+      return;
     }
   
-    // 3. Met à jour la promo si élève
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    // 4. Met à jour la promo si élève
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) {
-      setMessage("Impossible de récupérer l'utilisateur.")
-      console.error(userError)
-      return
+      setMessage("Impossible de récupérer l'utilisateur.");
+      console.error(userError);
+      return;
     }
   
     if (typeUtilisateur === 'eleve') {
       const { error: promoError } = await supabase
         .from('eleves')
         .update({ promo })
-        .eq('user_id', user.id)
+        .eq('user_id', user.id);
   
       if (promoError) {
-        setMessage('Erreur lors de la mise à jour de la promo.')
-        console.error(promoError)
-        return
+        setMessage('Erreur lors de la mise à jour de la promo.');
+        console.error(promoError);
+        return;
       }
     }
   
-    // 4. Redirige directement vers l'annuaire
-    setMessage('Compte configuré avec succès. Redirection...')
-    setTimeout(() => router.push('/annuaire'), 1000)
-  }
+    // 5. Redirige directement vers l'annuaire
+    setMessage('Compte configuré avec succès. Redirection...');
+    setTimeout(() => router.push('/annuaire'), 1000);
+  };
+  
   
 
   return (
