@@ -91,7 +91,7 @@ export default function ProfilPage() {
                 <h1 className="mt-4 text-3xl font-bold text-[#1b0a6d]">
                   {(eleve.prenom ?? "") + " " + (eleve.nom ?? "")}
                 </h1>
-                <p className="text-lg text-gray-600">Promotion {eleve.promo ?? "—"}</p>
+                <p className="text-lg text-gray-600">Promotion {eleve.promo ?? "non renseigné"}</p>
               </motion.div>
             </div>
 
