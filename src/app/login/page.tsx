@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Header from '../components/Header'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
@@ -11,6 +11,17 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState<string | null>(null);
   const router = useRouter()
+
+  // Vérifie la session immédiatement au chargement
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        router.push('/annuaire')
+      }
+    }
+    checkSession()
+  }, [supabase, router])
 
 
   // Vérification des infos de connexion de l'utilisateur

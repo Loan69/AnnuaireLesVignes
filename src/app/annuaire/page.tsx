@@ -171,7 +171,7 @@ export default function Annuaire() {
           {/* Bouton d'ajout d'utilisateurs : Seulement pour admin !! */}
           {(profile?.data.is_admin === true) && (
             <Link
-              href="/admin/ajoutUtilisateur"
+              href="/admin"
               className="px-4 py-2 bg-[#1b0a6d] text-white rounded hover:bg-[#D1D6F6] transition"
             >
               Admin
