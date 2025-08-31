@@ -69,24 +69,6 @@ export default function AjoutUtilisateur() {
     }
   }
 
-  const handleInvite = async (email: string) => {
-    try {
-      const res = await fetch('/api/inviteUser', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      })
-      const data = await res.json()
-      if (data.success) {
-        alert(`Lien envoyé à ${email}`)
-        fetchUsers() // rafraîchit le tableau
-      }
-    } catch (err) {
-      console.error(err)
-      alert(`Erreur lors de l'envoi du lien à ${email}`)
-    }
-  }
-
   const formatDate = (d: string | null) => {
     if (!d) return "-";
     return new Date(d).toLocaleDateString("fr-FR");
@@ -137,7 +119,7 @@ export default function AjoutUtilisateur() {
         {/* --------- Contenu onglet "Ajouter" --------- */}
         {activeTab === 'add' && (
           <div>
-            <label className="block mb-2 font-semibold">Type d'utilisateur :</label>
+            <label className="block mb-2 font-semibold">Type d&apos;utilisateur :</label>
             <select
               value={type}
               onChange={(e) => setType(e.target.value as 'E' | 'P')}
@@ -201,7 +183,7 @@ export default function AjoutUtilisateur() {
         <tr className="bg-gray-100">
           <th className="p-2 border">Email</th>
           <th className="p-2 border">Créé le</th>
-          <th className="p-2 border">S'est déjà connecté ?</th>
+          <th className="p-2 border">S&apos;est déjà connecté ?</th>
           <th className="p-2 border">Dernière connexion</th>
         </tr>
       </thead>

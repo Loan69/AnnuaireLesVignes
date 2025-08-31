@@ -23,8 +23,13 @@ export async function GET() {
     }));
 
     return NextResponse.json({ users });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error(err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    if (err instanceof Error) {
+      // Si c'est une vraie erreur JS, on peut lire err.message
+      return NextResponse.json({ error: err.message }, { status: 500 });
+    }
+    // Si ce n'est pas une instance d'Error (rare), on renvoie une string générique
+    return NextResponse.json({ error: String(err) }, { status: 500 });
   }
 }
