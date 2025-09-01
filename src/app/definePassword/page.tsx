@@ -25,7 +25,7 @@ export default function DefinirMotDePasse() {
 
       const { data: eleve } = await supabase
         .from('eleves')
-        .select('id')
+        .select('id, email_pro')
         .eq('user_id', user.id)
         .maybeSingle()
 
@@ -36,7 +36,7 @@ export default function DefinirMotDePasse() {
 
       const { data: prof } = await supabase
         .from('professeurs')
-        .select('id')
+        .select('id, email_pro')
         .eq('user_id', user.id)
         .maybeSingle()
 
@@ -44,7 +44,6 @@ export default function DefinirMotDePasse() {
         setTypeUtilisateur('professeur')
       }
     }
-
     checkSessionAndType()
   }, [])
 
@@ -59,47 +58,46 @@ export default function DefinirMotDePasse() {
       return;
     }
   
-    // 2. Rafraîchit explicitement la session (Option 1)
-    const { error: refreshError } = await supabase.auth.refreshSession();
-    if (refreshError) {
-      setMessage('Mot de passe défini, mais problème de session. Redirection vers le login...');
-      console.error(refreshError);
-      setTimeout(() => router.push('/login'), 2000);
-      return;
-    }
-  
-    // 3. Vérifie la session actuelle après le rafraîchissement
-    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-    if (sessionError || !sessionData.session) {
-      setMessage('Mot de passe défini, mais aucune session active. Redirection vers le login...');
-      setTimeout(() => router.push('/login'), 2000);
-      return;
-    }
-  
-    // 4. Met à jour la promo si élève
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
+    // 2. Récupère l'utilisateur courant
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    if (!currentUser) {
       setMessage("Impossible de récupérer l'utilisateur.");
-      console.error(userError);
       return;
     }
-  
+
+    // 3. Re-signe l'utilisateur pour forcer le cookie côté serveur
+    const { error: signinError } = await supabase.auth.signInWithPassword({
+      email: currentUser.email!,
+      password,
+    });
+    if (signinError) {
+      console.error(signinError);
+      setMessage('Mot de passe défini mais problème de session, redirection...');
+      setTimeout(() => router.push('/login'), 2000);
+      return;
+    }
+
+    // 4. Si élève, met à jour la promo
     if (typeUtilisateur === 'eleve') {
       const { error: promoError } = await supabase
         .from('eleves')
         .update({ promo })
-        .eq('user_id', user.id);
-  
+        .eq('user_id', currentUser.id);
+
       if (promoError) {
-        setMessage('Erreur lors de la mise à jour de la promo.');
         console.error(promoError);
+        setMessage('Erreur lors de la mise à jour de la promo.');
         return;
       }
     }
-  
+
     // 5. Redirige directement vers l'annuaire
     setMessage('Compte configuré avec succès. Redirection...');
-    setTimeout(() => router.push('/annuaire'), 1000);
+    sessionStorage.setItem('email', currentUser.email!)
+    sessionStorage.setItem('password', password)
+    setTimeout(() => router.push('/loginFromDefine'), 1000);
+   
+
   };
   
   
