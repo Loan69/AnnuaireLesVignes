@@ -412,6 +412,7 @@ export default function MonProfil() {
               <div>
                 <label className="block text-sm font-medium mb-1">Lycée(s)</label>
                 <div className="flex flex-wrap gap-2 mb-2">
+                  {/* Affichage des lycées sélectionnés sous forme de badges */}
                   {profile?.data.lycees?.map((lycee, idx) => (
                     <span
                       key={idx}
@@ -434,7 +435,7 @@ export default function MonProfil() {
                   value={inputLycee}
                   onChange={(e) => setInputLycee(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' && inputLycee.trim()) {
+                    if ((e.key === 'Enter' || e.key === 'Return') && inputLycee.trim()) {
                       e.preventDefault()
                       if (!profile?.data.lycees?.includes(inputLycee.trim())) {
                         updateLycees([...(profile?.data.lycees || []), inputLycee.trim()])
@@ -451,6 +452,7 @@ export default function MonProfil() {
             {profile?.type === 'eleve' && (
               <div>
                 <label className="block text-sm font-medium mb-1">Études supérieures</label>
+                 {/* Affichage des études sup sélectionnés sous forme de badges */}
                 <div className="flex flex-wrap gap-2 mb-2">
                   {profile?.type === 'eleve' &&
                     profile?.data.etudes_sup?.map((etude, idx) => (
