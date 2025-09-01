@@ -8,32 +8,10 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 export default function LoginPage() {
   const supabase = createClientComponentClient()
   const router = useRouter()
-  const searchParams = useSearchParams()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState<string | null>(null);
-
-  // Pré-remplissage depuis les query params (ou depuis sessionStorage si tu préfères)
-  useEffect(() => {
-    const emailParam = searchParams.get('email')
-    const passwordParam = searchParams.get('password')
-
-    if (emailParam) setEmail(emailParam)
-    if (passwordParam) setPassword(passwordParam)
-  }, [searchParams])
-
-  // Vérifie la session immédiatement au chargement
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        router.push('/annuaire')
-      }
-    }
-    checkSession()
-  }, [supabase, router])
-
 
   // Vérification des infos de connexion de l'utilisateur
   const handleLogin = async (e: React.FormEvent) => {
