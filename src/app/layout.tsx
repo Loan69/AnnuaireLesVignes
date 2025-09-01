@@ -3,7 +3,7 @@ import { Providers } from './providers'
 
 export const metadata = {
   title: 'Collège Les Vignes',
-  description: 'Logiciel de gestion et d&apos;édition de facture pour entrepreneurs',
+  description: 'Annuaire du Collège Les Vignes',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -11,14 +11,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="fr">
-      <head />
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </head>
       <body>
-      {appEnv === 'preprod' && (
+        {appEnv === 'preprod' && (
           <div className="w-full bg-yellow-300 text-black text-center p-2 text-sm font-semibold animate-pulse">
             Environnement de PRÉPRODUCTION
           </div>
         )}
-      {appEnv === 'development' && (
+        {appEnv === 'development' && (
           <div className="w-full bg-green-600 text-black text-center p-2 text-sm font-semibold animate-pulse">
             Environnement de DÉVELOPPEMENT
           </div>

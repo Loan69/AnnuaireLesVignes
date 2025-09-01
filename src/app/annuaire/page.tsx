@@ -139,27 +139,29 @@ export default function Annuaire() {
       <Header />
   
       {/* Header annuaire */}
-      <div className="flex items-center justify-between px-[10px] mt-8">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between px-4 mt-8 gap-4">
         {/* Titre de bienvenue affiché seulement si le prénom est chargé */}
-        {profile?.data?.prenom && (
-          <div className="mt-8 text-left px-[10px]">
-            <h1
-              className="text-4xl font-extrabold text-transparent bg-clip-text animate-fade-in"
-              style={{
-                backgroundImage: 'linear-gradient(to right, #1b0a6d, #D1D6F6)', // violet pâle uni
-              }}
-            >
-              Bienvenue {profile.data.prenom} 👋
-            </h1>
+        <div className="w-full md:w-auto text-center md:text-left">
+          {profile?.data?.prenom && (
+            <div className="mt-8 text-left px-[10px]">
+              <h1
+                className="text-4xl font-extrabold text-transparent bg-clip-text animate-fade-in"
+                style={{
+                  backgroundImage: 'linear-gradient(to right, #1b0a6d, #D1D6F6)', // violet pâle uni
+                }}
+              >
+                Bienvenue {profile.data.prenom} 👋
+              </h1>
 
-            <p className="text-gray-600 text-lg mt-2 animate-slide-up">
-              Heureux de vous retrouver dans l’espace des anciennes élèves.
-            </p>
-          </div>
-        )}
+              <p className="text-gray-600 text-lg mt-2 animate-slide-up">
+                Heureux de vous retrouver dans l’espace des anciennes élèves.
+              </p>
+            </div>
+          )}
+        </div>
   
         {/* Boutons à droite */}
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap justify-center items-center gap-2 w-full md:w-auto">
           <Button
             className="cursor-pointer hover:bg-gray-600 hover:text-white"
             variant="secondary"
@@ -207,50 +209,91 @@ export default function Annuaire() {
           </div>
 
           {/* Annuaires du collège */}
-          <table className="w-full border-collapse border border-gray-300">
-          <thead className="bg-[#D1D6F6]">
-            <tr>
-              <th className="border px-4 py-2">Photo</th>
-              <th className="border px-4 py-2">Prénom</th>
-              <th className="border px-4 py-2">Nom</th>
-              <th className="border px-4 py-2">Promotion</th>
-              <th className="border px-4 py-2">Email</th>
-              <th className="border px-4 py-2">Fiche utilisateur</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredEleves.map((eleve) => (
-              <tr key={eleve?.id}>
-                <td className="border px-2 py-2 text-center">
-                  {eleve?.avatar_url ? (
-                    <img
-                      src={eleve.avatar_url}
-                      alt="Avatar"
-                      className="w-12 h-12 rounded-full object-cover mx-auto"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm mx-auto">
-                      ?
-                    </div>
-                  )}
-                </td>
-                <td className="border px-4 py-2">{eleve?.prenom}</td>
-                <td className="border px-4 py-2">{eleve?.nom}</td>
-                <td className="border px-4 py-2">{eleve?.promo}</td>
-                <td className="border px-4 py-2">{eleve?.email_pro}</td>
-                <td className="border px-4 py-2 text-center">
-                  <Button
-                    variant="outline"
-                    onClick={() => router.push(`/profil/${eleve?.id}`)}
-                    className="cursor-pointer"
-                  >
-                    Visionner le profil
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+          {/* Version Ordinateur : tableau */}
+          <div className="hidden sm:block overflow-x-auto">
+            <table className="w-full border-collapse border border-gray-300">
+              <thead className="bg-[#D1D6F6]">
+                <tr>
+                  <th className="border px-4 py-2">Photo</th>
+                  <th className="border px-4 py-2">Prénom</th>
+                  <th className="border px-4 py-2">Nom</th>
+                  <th className="border px-4 py-2">Promotion</th>
+                  <th className="border px-4 py-2">Email</th>
+                  <th className="border px-4 py-2">Fiche élève</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredEleves.map((eleve) => (
+                  <tr key={eleve?.id}>
+                    <td className="border px-2 py-2 text-center">
+                      {eleve?.avatar_url ? (
+                        <img
+                          src={eleve.avatar_url}
+                          alt="Avatar"
+                          className="w-12 h-12 rounded-full object-cover mx-auto"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm mx-auto">
+                          ?
+                        </div>
+                      )}
+                    </td>
+                    <td className="border px-4 py-2">{eleve?.prenom}</td>
+                    <td className="border px-4 py-2">{eleve?.nom}</td>
+                    <td className="border px-4 py-2">{eleve?.promo}</td>
+                    <td className="border px-4 py-2">{eleve?.email_pro}</td>
+                    <td className="border px-4 py-2 text-center">
+                      <Button
+                        variant="outline"
+                        onClick={() => router.push(`/profil/${eleve?.id}`)}
+                        className="cursor-pointer"
+                      >
+                        Visionner le profil
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+        {/* Version Mobile : cartes */}
+        <div className="block sm:hidden grid grid-cols-1 gap-4">
+          {filteredEleves.map((eleve) => (
+            <div
+              key={eleve?.id}
+              className="border rounded-lg p-4 shadow hover:shadow-md transition flex flex-col items-center text-center"
+            >
+              {/* Avatar */}
+              {eleve?.avatar_url ? (
+                <img
+                  src={eleve.avatar_url}
+                  alt="Avatar"
+                  className="w-20 h-20 rounded-full object-cover mb-2"
+                />
+              ) : (
+                <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-xl mb-2">
+                  ?
+                </div>
+              )}
+
+              {/* Infos */}
+              <h3 className="font-semibold text-lg">{eleve?.prenom} {eleve?.nom}</h3>
+              <p className="text-gray-500">Promo : {eleve?.promo}</p>
+              <p className="text-gray-500">{eleve?.email_pro}</p>
+
+              {/* Bouton profil */}
+              <Button
+                variant="outline"
+                onClick={() => router.push(`/profil/${eleve?.id}`)}
+                className="mt-3 w-full"
+              >
+                Visionner le profil
+              </Button>
+            </div>
+          ))}
+        </div>
       </main>
     </div>
   )
