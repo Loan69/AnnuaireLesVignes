@@ -4,7 +4,9 @@ export interface Eleve {
   prenom?: string;
   promo?: string;
   email_pro?: string;
+  email_perso?: string;
   telephone?: string;
+  professions?: string[];
   statut?: string;
   avatar_url?: string | null;
   lycees?: string[];

@@ -4,7 +4,7 @@ export interface Professeur {
     prenom?: string;
     promo?: string;
     email_pro?: string;
-    email_contact?: string;
+    email_perso?: string;
     telephone?: string;
     statut?: string;
     avatar_url?: string | null;

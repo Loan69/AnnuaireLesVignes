@@ -152,7 +152,7 @@ export default function MonProfil() {
   }
 
   const updateProfessions = (newProfessions: string[]) => {
-    if (!profile || profile.type !== 'professeur') return
+    if (!profile) return
   
     setProfile({
       ...profile,
@@ -388,12 +388,23 @@ export default function MonProfil() {
             )}
 
             <div>
-              <label className="block text-sm font-medium mb-1">Email</label>
+              <label className="block text-sm font-medium mb-1">Email les Vignes</label>
               <input
-                name="email"
+                name="email_pro"
                 value={profile?.data.email_pro ?? ''}
                 disabled
                 className="w-full p-3 bg-gray-100 border border-gray-300 rounded cursor-not-allowed"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Email perso</label>
+              <input
+                name="email_perso"
+                placeholder='Email personnel'
+                value={profile?.data.email_perso ?? ''}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -404,7 +415,7 @@ export default function MonProfil() {
                 placeholder='Numéro de téléphone'
                 value={profile?.data.telephone ?? ''}
                 onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-pink-400"
+                className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -491,6 +502,7 @@ export default function MonProfil() {
                   }}
                   placeholder="Ajoutez vos études supérieures et appuyez sur Entrée"
                   className="w-full p-3 border border-gray-300 rounded"
+                  enterKeyHint="done"
                 />
               </div>
             )}
@@ -533,49 +545,52 @@ export default function MonProfil() {
                   }}
                   placeholder="Ajoutez les matières enseignées et appuyez sur Entrée"
                   className="w-full p-3 border border-gray-300 rounded"
+                  enterKeyHint="done"
                 />
               </div>
             )}
 
-            {profile?.type === 'professeur' && (
+            {(profile?.type === 'eleve' || profile?.type === 'professeur') && (
               <div>
                 <label className="block text-sm font-medium mb-1">Profession(s)</label>
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {profile?.data.professions?.map((profession, idx) => (
-                      <span
-                        key={idx}
-                        className="bg-[#1b0a6d] text-blue-100 px-3 py-1 rounded-full flex items-center"
-                      >
-                        {profession}
-                        <button
-                          type="button"
-                          onClick={() =>
-                            updateProfessions(profile.data.professions!.filter((_, i) => i !== idx))
-                          }
-                          className="ml-2 text-blue-100 hover:text-blue-500 font-bold cursor-pointer"
+                  {/* Affichage des professions sélectionnés sous forme de badges */}
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {profile?.data.professions?.map((prof, idx) => (
+                        <span
+                          key={idx}
+                          className="bg-[#1b0a6d] text-blue-100 px-3 py-1 rounded-full flex items-center"
                         >
-                          ×
-                        </button>
-                      </span>
-                    ))}
-                </div>
-                <input
-                  value={inputProfession}
-                  onChange={(e) => setInputProfession(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && inputProfession.trim()) {
-                      e.preventDefault()
-                      if (
-                        !profile?.data.professions?.includes(inputProfession.trim())
-                      ) {
-                        updateProfessions([...(profile?.data.professions || []), inputProfession.trim()])
+                          {prof}
+                          <button
+                            type="button"
+                            onClick={() =>
+                              updateProfessions(profile.data.professions!.filter((_, i) => i !== idx))
+                            }
+                            className="ml-2 text-blue-100 hover:text-blue-500 font-bold cursor-pointer"
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ))}
+                  </div>
+                  <input
+                    value={inputProfession}
+                    onChange={(e) => setInputProfession(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && inputProfession.trim()) {
+                        e.preventDefault()
+                        if (
+                          !profile?.data.professions?.includes(inputProfession.trim())
+                        ) {
+                          updateProfessions([...(profile?.data.professions || []), inputProfession.trim()])
+                        }
+                        setInputProfession('')
                       }
-                      setInputProfession('')
-                    }
-                  }}
-                  placeholder="Ajoutez vos professions si différentes de professeur"
-                  className="w-full p-3 border border-gray-300 rounded"
-                />
+                    }}
+                    placeholder="Ajoutez vos professions et appuyez sur Entrée"
+                    className="w-full p-3 border border-gray-300 rounded"
+                    enterKeyHint="done"
+                  />
               </div>
             )}
 

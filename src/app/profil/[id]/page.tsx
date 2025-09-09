@@ -101,6 +101,7 @@ export default function ProfilPage() {
               <InfoRow label="Nom" value={eleve.nom} />
               <InfoRow label="Promotion" value={eleve.promo} />
               <InfoRow label="Email professionnel" value={eleve.email_pro} />
+              <InfoRow label="Email personnel" value={eleve.email_perso} />
               <InfoRow label="Téléphone" value={eleve.telephone} />
 
               <ArrayRow label="Lycée(s)" items={eleve.lycees} />
