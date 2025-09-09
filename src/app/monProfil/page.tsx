@@ -435,7 +435,7 @@ export default function MonProfil() {
                   value={inputLycee}
                   onChange={(e) => setInputLycee(e.target.value)}
                   onKeyDown={(e) => {
-                    if ((e.key === 'Enter' || e.key === 'Return') && inputLycee.trim()) {
+                    if ((e.key === 'Enter') && inputLycee.trim()) {
                       e.preventDefault()
                       if (!profile?.data.lycees?.includes(inputLycee.trim())) {
                         updateLycees([...(profile?.data.lycees || []), inputLycee.trim()])
@@ -445,6 +445,7 @@ export default function MonProfil() {
                   }}
                   placeholder="Ajoutez un lycée et appuyez sur Entrée"
                   className="w-full p-3 border border-gray-300 rounded"
+                  enterKeyHint="done"
                 />
               </div>
             )}
