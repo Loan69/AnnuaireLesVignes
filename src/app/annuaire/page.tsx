@@ -212,50 +212,49 @@ export default function Annuaire() {
 
           {/* Version Ordinateur : tableau */}
           <div className="hidden sm:block overflow-x-auto">
-            <table className="w-full border-collapse border border-gray-300">
-              <thead className="bg-[#D1D6F6]">
-                <tr>
-                  <th className="border px-4 py-2">Photo</th>
-                  <th className="border px-4 py-2">Prénom</th>
-                  <th className="border px-4 py-2">Nom</th>
-                  <th className="border px-4 py-2">Promotion</th>
-                  <th className="border px-4 py-2">Email</th>
-                  <th className="border px-4 py-2">Fiche élève</th>
+          <table className="table-fixed border-collapse border border-gray-300 mx-auto">
+            <thead className="bg-[#D1D6F6]">
+              <tr>
+                <th className="border px-2 py-2 w-40">Photo</th>
+                <th className="border px-2 py-2 w-40">Nom</th>
+                <th className="border px-2 py-2 w-40">Prénom</th>
+                <th className="border px-2 py-2 w-40">Promotion</th>
+                <th className="border px-2 py-2 w-40">Fiche élève</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredEleves.map((eleve) => (
+                <tr key={eleve.id}>
+                  <td className="border py-2 text-center">
+                    {eleve.avatar_url ? (
+                      <img
+                        src={eleve.avatar_url}
+                        alt="Avatar"
+                        className="w-18 h-18 rounded-full object-cover mx-auto"
+                      />
+                    ) : (
+                      <div className="w-18 h-18 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm mx-auto">
+                        ?
+                      </div>
+                    )}
+                  </td>
+                  <td className="border px-2 py-2 text-center">{eleve.nom}</td>
+                  <td className="border px-2 py-2 text-center">{eleve.prenom}</td>
+                  <td className="border px-2 py-2 text-center">{eleve.promo ?? "Non renseignée"}</td>
+                  <td className="border px-2 py-2 text-center">
+                    <Button
+                      variant="outline"
+                      onClick={() => router.push(`/profil/${eleve.id}`)}
+                      className="cursor-pointer text-sm"
+                    >
+                      Voir le profil
+                    </Button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {filteredEleves.map((eleve) => (
-                  <tr key={eleve?.id}>
-                    <td className="border px-2 py-2 text-center">
-                      {eleve?.avatar_url ? (
-                        <img
-                          src={eleve.avatar_url}
-                          alt="Avatar"
-                          className="w-12 h-12 rounded-full object-cover mx-auto"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm mx-auto">
-                          ?
-                        </div>
-                      )}
-                    </td>
-                    <td className="border px-4 py-2">{eleve?.prenom}</td>
-                    <td className="border px-4 py-2">{eleve?.nom}</td>
-                    <td className="border px-4 py-2">{eleve?.promo}</td>
-                    <td className="border px-4 py-2">{eleve?.email_pro}</td>
-                    <td className="border px-4 py-2 text-center">
-                      <Button
-                        variant="outline"
-                        onClick={() => router.push(`/profil/${eleve?.id}`)}
-                        className="cursor-pointer"
-                      >
-                        Visionner le profil
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+              ))}
+            </tbody>
+          </table>
+
           </div>
 
         {/* Version Mobile : cartes */}
@@ -280,8 +279,7 @@ export default function Annuaire() {
 
               {/* Infos */}
               <h3 className="font-semibold text-lg">{eleve?.prenom} {eleve?.nom}</h3>
-              <p className="text-gray-500">Promo : {eleve?.promo}</p>
-              <p className="text-gray-500">{eleve?.email_pro}</p>
+              <p className="text-gray-500">Promo : {eleve?.promo ?? "Non renseignée"}</p>
 
               {/* Bouton profil */}
               <Button

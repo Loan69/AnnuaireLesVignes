@@ -10,6 +10,7 @@ type UserSupabase = {
   email: string
   created_at: string
   last_sign_in_at: string | null
+  type_utilisateur: string
 }
 
 export default function AjoutUtilisateur() {
@@ -54,7 +55,7 @@ export default function AjoutUtilisateur() {
     }
   }
 
-  /** ----------- Gestion liste utilisateurs + invitations ----------- */
+  /** ----------- Gestion liste utilisateurs ----------- */
   const fetchUsers = async () => {
     setLoadingUsers(true)
     try {
@@ -112,7 +113,7 @@ export default function AjoutUtilisateur() {
             }`}
             onClick={() => setActiveTab('invite')}
           >
-            Inviter des utilisateurs
+            Consulter les utilisateurs
           </button>
         </div>
 
@@ -169,7 +170,7 @@ export default function AjoutUtilisateur() {
           </div>
         )}
 
-        {/* --------- Contenu onglet "Inviter" --------- */}
+        {/* --------- Contenu onglet "Consulter" --------- */}
         {activeTab === 'invite' && (
           <div>
             {loadingUsers ? (
@@ -182,6 +183,7 @@ export default function AjoutUtilisateur() {
       <thead>
         <tr className="bg-gray-100">
           <th className="p-2 border">Email</th>
+          <th className="p-2 border">Type d&apos;utilisateur</th>
           <th className="p-2 border">Créé le</th>
           <th className="p-2 border">S&apos;est déjà connecté ?</th>
           <th className="p-2 border">Dernière connexion</th>
@@ -194,6 +196,12 @@ export default function AjoutUtilisateur() {
         return (
           <tr key={u.id}>
             <td className="p-2 border">{u.email}</td>
+            <td className="p-2 border">{u.type_utilisateur === 'E'
+              ? 'Élève'
+              : u.type_utilisateur === 'P'
+              ? 'Professeur'
+              : 'Non classé'}
+            </td>
             <td className="p-2 border">{formatDate(u.created_at)}</td>
             <td className="p-2 border text-center">
               {registered ? "✅" : "❌"}
