@@ -43,18 +43,18 @@ export async function POST(req: Request) {
 
     if (!user) {
       rapport.push(`ℹ️ Création du compte Supabase pour ${email}`)
-      const { data: created, error: createError } = await supabase.auth.admin.createUser({
-        email,
-        email_confirm: true
-      })
-      if (createError || !created?.user) {
-        rapport.push(`❌ Échec création compte : ${createError?.message || 'inconnu'}`)
-        continue
-      }
-      user = created.user
 
-      // Envoi d'un mail à l'utilisateur pour créer son compte
-      await supabase.auth.admin.inviteUserByEmail(email)
+      // Création du compte supabase et envoi d'un mail à l'utilisateur pour confirmer 
+      const { data: created, error: errorCreated } = await supabase.auth.admin.inviteUserByEmail(email)
+
+      if (!errorCreated) {
+        rapport.push(`ℹ️ Email envoyé à ${email}`)
+        user = created.user
+      } else {
+        rapport.push(`Erreur lors de l'envoi du mail de confirmation à ${email}`)
+        console.error("Erreur lors de l'envoi du mail de confirmation : ", errorCreated.message)
+      }
+
     }
 
     const table = type === 'E' ? 'eleves' : 'professeurs'
@@ -90,7 +90,7 @@ export async function POST(req: Request) {
       nom,
       prenom,
       is_admin: false,
-      user_id: user.id
+      user_id: user?.id
     })
 
     if (insertError) {
