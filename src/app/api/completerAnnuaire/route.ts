@@ -54,7 +54,7 @@ export async function POST(req: Request) {
       user = created.user
 
       // Envoi d'un mail à l'utilisateur pour créer son compte
-      //await supabase.auth.admin.inviteUserByEmail(email)
+      await supabase.auth.admin.inviteUserByEmail(email)
     }
 
     const table = type === 'E' ? 'eleves' : 'professeurs'
