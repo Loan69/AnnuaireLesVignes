@@ -53,6 +53,7 @@ export async function POST(req: Request) {
       } else {
         rapport.push(`Erreur lors de l'envoi du mail de confirmation à ${email}`)
         console.error("Erreur lors de l'envoi du mail de confirmation : ", errorCreated.message)
+        continue
       }
 
     }
