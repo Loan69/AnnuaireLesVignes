@@ -387,10 +387,10 @@ export default function MonProfil() {
               </div>
             )}
             <div>
-              <label className="block text-sm font-medium mb-1">Email perso</label>
+              <label className="block text-sm font-medium mb-1">Email de contact</label>
               <input
                 name="email_perso"
-                placeholder='Email personnel'
+                placeholder='Email de contact'
                 value={profile?.data.email_perso ?? ''}
                 onChange={handleChange}
                 className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"

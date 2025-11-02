@@ -82,7 +82,7 @@ export default function DefinirMotDePasse() {
     if (typeUtilisateur === 'eleve') {
       const { error: promoError } = await supabase
         .from('eleves')
-        .update({ promo, email_perso: emailContact })
+        .update({ promo, email_perso: emailContact && emailContact.trim() !== '' ? emailContact : null})
         .eq('user_id', currentUser.id);
 
       if (promoError) {
