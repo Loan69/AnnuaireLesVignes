@@ -386,17 +386,6 @@ export default function MonProfil() {
                 />
               </div>
             )}
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Email les Vignes</label>
-              <input
-                name="email_pro"
-                value={profile?.data.email_pro ?? ''}
-                disabled
-                className="w-full p-3 bg-gray-100 border border-gray-300 rounded cursor-not-allowed"
-              />
-            </div>
-
             <div>
               <label className="block text-sm font-medium mb-1">Email perso</label>
               <input

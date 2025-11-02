@@ -100,12 +100,12 @@ export default function ProfilPage() {
               <InfoRow label="Prénom" value={eleve.prenom} />
               <InfoRow label="Nom" value={eleve.nom} />
               <InfoRow label="Promotion" value={eleve.promo} />
-              <InfoRow label="Email professionnel" value={eleve.email_pro} />
-              <InfoRow label="Email personnel" value={eleve.email_perso} />
+              <InfoRow label="Email de contact" value={eleve.email_perso} />
               <InfoRow label="Téléphone" value={eleve.telephone} />
 
               <ArrayRow label="Lycée(s)" items={eleve.lycees} />
               <ArrayRow label="Études supérieures" items={eleve.etudes_sup} />
+              <ArrayRow label="Profession(s)" items={eleve.professions} />
             </div>
           </div>
         </div>
@@ -128,7 +128,7 @@ function InfoRow({ label, value }: { label: string; value?: string | null }) {
 function ArrayRow({ label, items }: { label: string; items?: string[] | null }) {
   const list = Array.isArray(items) ? items : []
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between border-b pb-2">
       <span className="block text-[#1b0a6d] font-semibold mb-2">{label}</span>
       {list.length > 0 ? (
         <div className="flex flex-wrap gap-2">

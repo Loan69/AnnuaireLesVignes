@@ -100,6 +100,7 @@ export default function Annuaire() {
       const { data, error } = await supabase
         .from('eleves')
         .select('*')
+        .eq('is_admin', false)
         .order('nom', { ascending: true })       // tri par nom
         .order('prenom', { ascending: true })   // tri par prénom
 
@@ -287,7 +288,7 @@ export default function Annuaire() {
                 onClick={() => router.push(`/profil/${eleve?.id}`)}
                 className="mt-3 w-full"
               >
-                Visionner le profil
+                Voir le profil
               </Button>
             </div>
           ))}

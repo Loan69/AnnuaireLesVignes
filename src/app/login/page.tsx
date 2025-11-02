@@ -40,11 +40,11 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block mb-1 text-sm">Adresse email</label>
+            <label className="block mb-1 text-sm">Identifiant</label>
             <input
               type="email"
               className="w-full border rounded px-3 py-2"
-              placeholder="Entrer votre email"
+              placeholder="Entrer votre identifiant"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

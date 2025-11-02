@@ -8,6 +8,7 @@ import Header from '../components/Header'
 export default function DefinirMotDePasse() {
   const [password, setPassword] = useState('')
   const [promo, setPromo] = useState('')
+  const [emailContact, setEmailContact] = useState('')
   const [message, setMessage] = useState('')
   const [typeUtilisateur, setTypeUtilisateur] = useState<'eleve' | 'professeur' | null>(null)
   const router = useRouter()
@@ -77,11 +78,11 @@ export default function DefinirMotDePasse() {
       return;
     }
 
-    // 4. Si élève, met à jour la promo
+    // 4. Si élève, met à jour la promo et l'email de contact
     if (typeUtilisateur === 'eleve') {
       const { error: promoError } = await supabase
         .from('eleves')
-        .update({ promo })
+        .update({ promo, email_perso: emailContact })
         .eq('user_id', currentUser.id);
 
       if (promoError) {
@@ -128,6 +129,18 @@ export default function DefinirMotDePasse() {
                 />
               </div>
             )}
+
+            {/* Email de contact  */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email de contact</label>
+              <input
+                type="text"
+                placeholder="Email de contact (facultatif)"
+                value={emailContact}
+                onChange={(e) => setEmailContact(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
