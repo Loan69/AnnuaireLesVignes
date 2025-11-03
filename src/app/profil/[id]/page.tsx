@@ -15,6 +15,8 @@ export default function ProfilPage() {
   const supabase = createClientComponentClient()
   const [eleve, setEleve] = useState<Eleve | null>(null)
   const [loading, setLoading] = useState(true)
+  const [showImageModal, setShowImageModal] = useState(false)
+
 
   useEffect(() => {
     const fetchEleve = async () => {
@@ -70,16 +72,44 @@ export default function ProfilPage() {
                 transition={{ duration: 0.6, ease: "easeOut" }}
               >
                 {eleve.avatar_url ? (
-                  <img
-                    src={eleve.avatar_url}
-                    alt="Avatar"
-                    className="w-32 h-32 rounded-full object-cover border-4 border-[#D1D6F6] shadow-md"
-                  />
+                  <>
+                    <img
+                      src={eleve.avatar_url}
+                      alt="Avatar"
+                      onClick={() => setShowImageModal(true)}
+                      className="w-32 h-32 rounded-full object-cover border-4 border-[#D1D6F6] shadow-md cursor-pointer hover:scale-105 transition-transform"
+                    />
+
+                    {showImageModal && (
+                      <div
+                        className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+                        onClick={() => setShowImageModal(false)}
+                      >
+                        <div
+                          className="relative"
+                          onClick={(e) => e.stopPropagation()} // empêche la fermeture si on clique sur l'image
+                        >
+                          <img
+                            src={eleve.avatar_url}
+                            alt="Aperçu avatar"
+                            className="max-h-[80vh] max-w-[90vw] rounded-2xl shadow-2xl"
+                          />
+                          <button
+                            onClick={() => setShowImageModal(false)}
+                            className="cursor-pointer absolute top-2 right-2 bg-black/50 text-white rounded-sm px-2 pb-0.5 hover:bg-black/70"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-4xl shadow-md">
                     ?
                   </div>
                 )}
+
               </motion.div>
 
               <motion.div
@@ -89,7 +119,7 @@ export default function ProfilPage() {
                 transition={{ duration: 0.6, ease: "easeOut", delay: 0.3 }}
               >
                 <h1 className="mt-4 text-3xl font-bold text-[#1b0a6d]">
-                  {(eleve.prenom ?? "") + " " + (eleve.nom ?? "")}
+                  {(eleve.prenom ?? "") + " " + (eleve.nom?.toUpperCase() ?? "")}
                 </h1>
                 <p className="text-lg text-gray-600">Promotion {eleve.promo ?? "non renseigné"}</p>
               </motion.div>
@@ -98,7 +128,7 @@ export default function ProfilPage() {
             {/* Infos */}
             <div className="mt-8 space-y-4">
               <InfoRow label="Prénom" value={eleve.prenom} />
-              <InfoRow label="Nom" value={eleve.nom} />
+              <InfoRow label="Nom" value={eleve.nom?.toUpperCase()} />
               <InfoRow label="Promotion" value={eleve.promo} />
               <InfoRow label="Email de contact" value={eleve.email_perso} />
               <InfoRow label="Téléphone" value={eleve.telephone} />

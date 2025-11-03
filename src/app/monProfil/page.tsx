@@ -4,11 +4,14 @@ import { useEffect, useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { Eleve } from '@/types/Eleve'
-import { SupabaseClient } from '@supabase/supabase-js';
 import { User } from '@supabase/supabase-js'
 import { Professeur } from '@/types/Professeur'
 import Header from '../components/Header'
 import LoadingSpinner from '../components/LoadingSpinner'
+import Cropper from 'react-easy-crop'
+import type { Area, Point } from 'react-easy-crop'
+import getCroppedImg from '../utils/cropImage'
+
 
 type ProfileData =
   | { type: 'eleve'; data: Eleve }
@@ -35,6 +38,14 @@ export default function MonProfil() {
 
   const [table, setTable] = useState('')
   const [previewAvatar, setPreviewAvatar] = useState<string | null>(null)
+
+  // Gestion de l'édition de la photo de profil
+  const [imageSrc, setImageSrc] = useState<string | null>(null)
+  const [showCropper, setShowCropper] = useState(false)
+  const [crop, setCrop] = useState<Point>({ x: 0, y: 0 })
+  const [zoom, setZoom] = useState<number>(1)
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
+
 
   
   // Chargement des données de l'utilisateur
@@ -163,67 +174,6 @@ export default function MonProfil() {
     })
     setIsDirty(true)
   }
-  
-  
-
-  // Insertion ou modification de la photo de profil
-  const handlePictureUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    userId: string,
-    supabase: SupabaseClient,
-    setProfile: React.Dispatch<React.SetStateAction<ProfileData | null>>,
-    setIsDirty?: (dirty: boolean) => void
-  ) => {
-    const file = e.target.files?.[0];
-    if (!file || !userId) return;
-  
-    // Aperçu instantané
-    const localUrl = URL.createObjectURL(file);
-    setPreviewAvatar(localUrl);
-  
-    const fileName = `avatar-${userId}`;
-  
-    const { error: uploadError } = await supabase.storage
-      .from('avatars')
-      .upload(fileName, file, {
-        upsert: true,
-        contentType: file.type,
-        cacheControl: 'public, max-age=0',
-      });
-  
-    if (uploadError) {
-      console.error('Erreur lors de l’upload :', uploadError.message);
-      return;
-    }
-  
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from('avatars').getPublicUrl(fileName);
-  
-    const { error: updateError } = await supabase
-      .from(table)
-      .update({ avatar_url: publicUrl })
-      .eq('user_id', userId);
-  
-    if (updateError) {
-      console.error('Erreur mise à jour avatar_url :', updateError.message);
-      return;
-    }
-  
-    setProfile((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        data: {
-          ...prev.data,
-          avatar_url: publicUrl,
-        }
-      };
-    });
-  
-    if (setIsDirty) setIsDirty(true);
-  };
-  
 
   // Enregistrement des informations de l'utilisateur
   const handleUpdate = async () => {
@@ -247,11 +197,58 @@ export default function MonProfil() {
     setLoading(false)
   }
    
-  
-
   const handleBack = () => {
     router.push('/annuaire')
   }
+
+  const onCropComplete = (_: Area, croppedAreaPixels: Area) => {
+    setCroppedAreaPixels(croppedAreaPixels)
+  }
+
+  const uploadCroppedImage = async () => {
+    if (!croppedAreaPixels || !imageSrc || !user?.id) return
+
+    // Convertir l’image recadrée en fichier
+    const croppedFile = await getCroppedImg(imageSrc, croppedAreaPixels)
+    const fileName = `avatar-${user.id}`
+
+    // Upload sur Supabase
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(fileName, croppedFile, {
+        upsert: true,
+        contentType: 'image/jpeg',
+      })
+
+    if (uploadError) {
+      console.error('Erreur upload image :', uploadError.message)
+      return
+    }
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('avatars').getPublicUrl(fileName)
+
+    const refreshedUrl = `${publicUrl}?t=${Date.now()}`
+
+    // Mise à jour Supabase
+    await supabase
+      .from(table)
+      .update({ avatar_url: publicUrl }) // on garde l’URL propre dans la DB
+      .eq('user_id', user.id)
+
+    // Mise à jour locale (React)
+    setProfile((prev) =>
+      prev
+        ? { ...prev, data: { ...prev.data, avatar_url: refreshedUrl } }
+        : prev
+    )
+    setPreviewAvatar(refreshedUrl)
+    setShowCropper(false)
+    setImageSrc(null)
+  }
+
+
 
   if(loading) {
     return <LoadingSpinner />
@@ -297,12 +294,18 @@ export default function MonProfil() {
               type="file"
               accept="image/*"
               onChange={(e) => {
-                if (user?.id) {
-                  handlePictureUpload(e, user.id, supabase, setProfile, setIsDirty);
+                const file = e.target.files?.[0]
+                if (!file) return
+                const reader = new FileReader()
+                reader.onload = () => {
+                  setImageSrc(reader.result as string)
+                  setShowCropper(true) // on ouvre la modale de recadrage
                 }
+                reader.readAsDataURL(file)
               }}
               className="hidden"
             />
+
 
             {(previewAvatar || profile?.data.avatar_url) && (
               <div className="mt-4">
@@ -369,7 +372,7 @@ export default function MonProfil() {
               <label className="block text-sm font-medium mb-1">Nom</label>
               <input
                 name="nom"
-                value={profile?.data.nom ?? ''}
+                value={profile?.data.nom?.toUpperCase() ?? ''}
                 disabled
                 className="w-full p-3 bg-gray-100 border border-gray-300 rounded cursor-not-allowed"
               />
@@ -598,6 +601,56 @@ export default function MonProfil() {
             )}
         </div>
       </div>
+      
+      {/* Modale de recadrage de la photo de profile */}
+      {showCropper && (
+        <div className="fixed inset-0 bg-black/70 flex flex-col items-center justify-center z-50">
+          <div className="relative w-72 h-72 bg-gray-900 rounded-lg overflow-hidden">
+            <Cropper
+              image={imageSrc!}
+              crop={crop}
+              zoom={zoom}
+              aspect={1}
+              cropShape="round"
+              showGrid={false}
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
+              onCropComplete={onCropComplete}
+            />
+          </div>
+          
+          <div className="flex flex-col items-center mt-4 w-64">
+            <input
+              type="range"
+              min={1}
+              max={3}
+              step={0.1}
+              value={zoom}
+              onChange={(e) => setZoom(Number(e.target.value))}
+              className="w-full mb-3"
+            />
+
+            <div className="flex gap-3">
+              <button
+                onClick={uploadCroppedImage}
+                className="cursor-pointer bg-[#1b0a6d] text-white px-4 py-2 rounded hover:bg-blue-700"
+              >
+                Valider
+              </button>
+              <button
+                onClick={() => {
+                  setShowCropper(false)
+                  setImageSrc(null)
+                }}
+                className="cursor-pointer bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }

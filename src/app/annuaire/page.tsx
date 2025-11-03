@@ -119,13 +119,19 @@ export default function Annuaire() {
 
   // Gestion des filtres de la page
   const filteredEleves = eleves.filter((eleve) => {
-    const matchesSearch =
-      `${eleve?.prenom ?? ''} ${eleve?.nom ?? ''} ${eleve?.email_pro ?? ''}`
-        .toLowerCase()
-        .includes(search.toLowerCase())
+    const searchLower = search.toLowerCase()
+
+    // On construit une chaîne de recherche qui inclut prénom, nom, email, ET les lycées
+    const lycees = Array.isArray(eleve?.lycees) ? eleve.lycees.join(' ') : ''
+    const searchableString = `${eleve?.prenom ?? ''} ${eleve?.nom ?? ''} ${lycees}`.toLowerCase()
+
+    const matchesSearch = searchableString.includes(searchLower)
+
     const matchesPromo = promoFilter ? eleve?.promo === promoFilter : true
+
     return matchesSearch && matchesPromo
   })
+
 
   const uniquePromos = Array.from(new Set(eleves.map((e) => e?.promo))).filter(Boolean).sort()
 
@@ -190,7 +196,7 @@ export default function Annuaire() {
         <div className="mb-4 flex gap-4 items-center">
             <input
               type="text"
-              placeholder="Rechercher par nom, prénom ou email..."
+              placeholder="Rechercher par nom, prénom ou lycée..."
               className="p-2 border rounded w-full max-w-md"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -239,7 +245,7 @@ export default function Annuaire() {
                       </div>
                     )}
                   </td>
-                  <td className="border px-2 py-2 text-center">{eleve.nom}</td>
+                  <td className="border px-2 py-2 text-center">{eleve.nom?.toUpperCase()}</td>
                   <td className="border px-2 py-2 text-center">{eleve.prenom}</td>
                   <td className="border px-2 py-2 text-center">{eleve.promo ?? "Non renseignée"}</td>
                   <td className="border px-2 py-2 text-center">
@@ -279,7 +285,7 @@ export default function Annuaire() {
               )}
 
               {/* Infos */}
-              <h3 className="font-semibold text-lg">{eleve?.prenom} {eleve?.nom}</h3>
+              <h3 className="font-semibold text-lg">{eleve?.prenom} {eleve?.nom?.toUpperCase()}</h3>
               <p className="text-gray-500">Promo : {eleve?.promo ?? "Non renseignée"}</p>
 
               {/* Bouton profil */}
