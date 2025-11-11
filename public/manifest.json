@@ -1,0 +1,21 @@
+{
+  "name": "Annuaire Les Vignes",
+  "short_name": "Annuaire",
+  "description": "Annuaire du Collège Les Vignes",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#D1D6F6",
+  "icons": [
+    {
+      "src": "/images/LogoAdav.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/LogoAdav.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
